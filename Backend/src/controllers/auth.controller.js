@@ -81,9 +81,9 @@ const registerController = async (req, res) => {
     hash,
   ]);
 
-  const school = result.rows[0];
+  const user = result.rows[0];
   const token = jwt.sign(
-    { id: school.school_id, email: school.email },
+    { id: user.school_id, user: user.email },
     process.env.JWT_SECRET || "your_jwt_secret",
     { expiresIn: "7d" },
   );
@@ -92,12 +92,12 @@ const registerController = async (req, res) => {
 
   return res.status(201).json({
     message: "School registered successfully",
-    school: {
-      id: school.school_id,
-      schoolName: school.schoolName,
-      email: school.email,
-      contact: school.contact,
-      token
+    user: {
+      id: user.school_id,
+      schoolName: user.schoolName,
+      email: user.email,
+      contact: user.contact,
+      token,
     },
   });
 };
@@ -105,9 +105,11 @@ const registerController = async (req, res) => {
 const loginController = async (req, res) => {
   const { email, passcode } = req.body;
 
-  const result = await pool.query(`SELECT * FROM school WHERE email=$1`, [email]);
-  
-  const user = result.rows[0]
+  const result = await pool.query(`SELECT * FROM school WHERE email=$1`, [
+    email,
+  ]);
+
+  const user = result.rows[0];
   if (!user) {
     return res.status(400).json({
       message: "Invalid email or password",
@@ -123,12 +125,12 @@ const loginController = async (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: user.school_id, email : user.email },
+    { id: user.school_id, email: user.email },
     process.env.SECRET_KEY,
-    { expiresIn: "24h" }
+    { expiresIn: "24h" },
   );
 
-   res.cookie("token", token);
+  res.cookie("token", token);
 
   res.status(200).json({
     message: "Login successful",
@@ -140,4 +142,48 @@ const loginController = async (req, res) => {
   });
 };
 
-module.exports = { registerController , loginController };
+const logoutController = async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(400).json({
+      message: "No token found",
+    });
+  }
+
+  const decoded = jwt.verify(
+    token,
+    process.env.SECRET_KEY || "your_jwt_secret",
+  );
+
+  await pool.query(
+    `INSERT INTO blacklisted_tokens(token, user_id, expires_at)
+    VALUES ($1, $2, to_timestamp($3))`,
+    [token, decoded.id, decoded.exp],
+  );
+
+  res.clearCookie("token");
+
+  return res.status(200).json({
+    message: "Logout successful",
+  });
+};
+
+const profileController = async (req, res) => {
+  const user = await pool.query(`SELECT * FROM school WHERE school_id=$1`, [
+    req.user.id,
+  ]);
+
+  console.log(req.user);
+  res.status(200).json({
+    message: "User fetched successfully",
+    user : user.rows[0]
+  });
+};
+
+module.exports = {
+  registerController,
+  loginController,
+  logoutController,
+  profileController,
+};

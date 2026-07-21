@@ -12,3 +12,19 @@ CREATE TABLE school(
 	 passcode VARCHAR(255) NOT NULL 
 	
 )
+
+
+-- //blacklist token schema
+
+CREATE TABLE blacklisted_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token TEXT NOT NULL UNIQUE,
+    user_id UUID REFERENCES school(school_id) ON DELETE CASCADE,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
+
+
