@@ -11,9 +11,11 @@ const Register = () => {
     setCurrForm(currForm + 1);
   };
 
+  
+
   const submitHandler = (e) => {
     e.preventDefault();
-  }
+  };
 
   return (
     <div className="bg-[#060b18] h-screen w-screen flex text-white">
@@ -46,6 +48,14 @@ const Register = () => {
           <p className="text-[#94a3b8]">
             Complete all 3 steps to create your account
           </p>
+
+          <div className="step">
+            <div className={currForm == 1 ? "active-step" : "completed-step" }>{currForm == 1 ? '1' : <span>&#10003;</span>}</div>
+            <div className="step-line"></div>
+            <div className="step-block">2</div>
+            <div className="step-line"></div>
+            <div className="step-block">3</div>
+          </div>
 
           <form className="login-form">
             {currForm == "1" && (
