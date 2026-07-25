@@ -4,19 +4,19 @@ import {Link} from 'react-router'
 const Login = () => {
   return (
     <div className="h-screen flex flex-row bg-[#060b18] ">
-      <div className="p-5 border-[#393939] border-r border-solid  w-[55%] bg-[radial-gradient(circle_at_top_left,rgba(88,28,135,0.5)_0%,rgba(30,27,75,0.35)_55%,#0B1020_70%,#070B16_100%)] flex items-center justify-center ">
-        <div className="w-[50%] flex flex-col justify-start">
+      <div className="p-4 border-[#393939] border-r border-solid  w-[50%] bg-[radial-gradient(circle_at_top_left,rgba(88,28,135,0.5)_0%,rgba(30,27,75,0.35)_55%,#0B1020_70%,#070B16_100%)] flex items-center justify-center ">
+        <div className="w-[48%] flex flex-col justify-start">
           <div>
             <img
-              className="w-40 mb-4 relative -left-1.5 "
+              className="w-28 mb-3"
               src="/Gemini_Generated_Image_lk6x0elk6x0elk6x-removebg-preview.png"
-              alt=""
+              alt="CampusOS"
             />
           </div>
-          <h1 className="text-white font-bold text-3xl leading-10 mb-1">
+          <h1 className="text-white font-bold text-2xl leading-8 mb-1">
             Empowering Schools with Smart Management
           </h1>
-          <p className="text-xs text-[#94a3b8] leading-relaxed mb-4 ">
+          <p className="text-xs text-[#94a3b8] leading-relaxed mb-3 ">
             Manage students, staff, academics, fees, attendance, and more — all
             from one unified platform built for modern Indian schools.
           </p>
@@ -37,7 +37,7 @@ const Login = () => {
           </ol>
         </div>
       </div>
-      <div className="w-[50%] right-box px-20 py-20">
+      <div className="w-[50%] right-box px-12 py-12">
         <div className="login-box w-full h-full">
           <div>
             <h1 className="text-white font-extrabold text-xl">Welcome Back</h1>
@@ -83,7 +83,7 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="principal@school.edu.in"
-                  className="input-field w-full"
+                  className="input-field w-full py-2 px-3"
                 />
               </div>
             </div>
@@ -124,7 +124,7 @@ const Login = () => {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
-                  className="input-field w-full"
+                  className="input-field w-full py-2 px-3"
                 />
                 <span className="input-icon right-icon">
                   <svg

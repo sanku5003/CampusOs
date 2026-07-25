@@ -1,0 +1,69 @@
+.left,
+.right {
+    width: 50%;
+    height: 100%;
+}
+
+.left {
+    background: radial-gradient(circle at top left, rgba(88, 28, 135, 0.5) 0%, rgba(30, 27, 75, 0.35) 55%, #0B1020 70%, #070B16 100%);
+    border-right: 1px solid #393939;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+
+    .left-box {
+
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: start;
+        padding: 0;
+        gap: 10px;
+    }
+
+    p {
+        line-height: 1.7;
+        letter-spacing: .5px;
+    }
+
+
+}
+
+.right {
+    background:
+        radial-gradient(circle at 18% 82%,
+            rgba(91, 38, 179, 0.22) 0%,
+            rgba(91, 38, 179, 0.12) 20%,
+            rgba(91, 38, 179, 0.04) 38%,
+            transparent 58%),
+        radial-gradient(circle at 88% 88%,
+            rgba(0, 182, 255, 0.20) 0%,
+            rgba(0, 182, 255, 0.10) 22%,
+            rgba(0, 182, 255, 0.03) 40%,
+            transparent 62%),
+        #050914;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: scroll;
+    scrollbar-width: none;
+
+
+    .register-form {
+        padding: 40px;
+        border: 1px solid #393939;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+
+        p {
+            letter-spacing: .5px;
+            margin-top: 3px;
+            font-size: small;
+        }
+    }
+}
