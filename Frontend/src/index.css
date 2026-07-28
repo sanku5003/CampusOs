@@ -133,3 +133,37 @@ button[type="submit"] {
   accent-color: rgba(88, 28, 135, 0.8);
 }
 
+
+.login-field input , .login-field label , .login-field select  , .login-form button{
+  animation: slideIn 500ms ease-in-out 0s forwards;
+}
+
+.login-field .input-icon {
+   animation: opacity 1000ms ease-in 0s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        transform:translateX(30%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

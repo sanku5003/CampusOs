@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/register.css";
 import "remixicon/fonts/remixicon.css";
+import { Link } from "react-router";
 const Register = () => {
   const [currForm, setCurrForm] = useState(1);
   const [schoolName, setSchoolName] = useState("");
@@ -14,6 +15,18 @@ const Register = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [agreeTandC, setAgreeTandC] = useState(false);
+  // Validation error messages
+  const [errSchoolName, setErrSchoolName] = useState("");
+  const [errPrincipal, setErrPrincipal] = useState("");
+  const [errUdise, setErrUdise] = useState("");
+  const [errContact, setErrContact] = useState("");
+  const [errAddress, setErrAddress] = useState("");
+  const [errCity, setErrCity] = useState("");
+  const [errState, setErrState] = useState("");
+  const [errPincode, setErrPincode] = useState("");
+  const [errEmail, setErrEmail] = useState("");
+  const [errPassword, setErrPassword] = useState("");
+  const [errAgree, setErrAgree] = useState("");
 
   const prevPage = () => {
     setCurrForm(currForm - 1);
@@ -21,12 +34,95 @@ const Register = () => {
 
   const submitHandlerForFirstForm = (e) => {
     e.preventDefault();
-    setCurrForm(2);
+    // reset errors
+    setErrSchoolName("");
+    setErrPrincipal("");
+    setErrUdise("");
+    setErrContact("");
+
+    let valid = true;
+    if (!schoolName || schoolName.trim() === "") {
+      setErrSchoolName("School name is required.");
+      valid = false;
+    }
+    if (!principal || principal.trim() === "") {
+      setErrPrincipal("Principal name is required.");
+      valid = false;
+    }
+    const udiseVal = String(udiseCode || "").replace(/\D/g, "");
+    if (!udiseVal || !/^\d{11}$/.test(udiseVal)) {
+      setErrUdise("Valid 11-digit UDISE code is required.");
+      valid = false;
+    }
+    const contactDigits = String(contact || "").replace(/\D/g, "");
+    if (!contactDigits  ) {
+      setErrContact("Valid contact number is required.");
+      valid = false;
+    } else if (contactDigits.length < 10){
+       setErrContact("Plz enter a valid contact number");
+      valid = false;
+    }
+
+    if (valid) setCurrForm(2);
   };
 
   const submitHandlerForSecForm = (e) => {
     e.preventDefault();
-    setCurrForm(3);
+    // reset errors
+    setErrAddress("");
+    setErrCity("");
+    setErrState("");
+    setErrPincode("");
+
+    let valid = true;
+    if (!fullAddress || fullAddress.trim() === "") {
+      setErrAddress("Address is required.");
+      valid = false;
+    } 
+    if (!city || city.trim() === "") {
+      setErrCity("City is required.");
+      valid = false;
+    }
+    if (!state || String(state).trim() === "") {
+      setErrState("State is required.");
+      valid = false;
+    }
+    const pin = String(pincode || "").replace(/\D/g, "");
+    if (!pin || !/^\d{6}$/.test(pin)) {
+      setErrPincode("Valid 6-digit pincode is required.");
+      valid = false;
+    }
+
+    if (valid) setCurrForm(3);
+  };
+
+  const submitHandlerForThirdForm = (e) => {
+    e.preventDefault();
+    // reset errors
+    setErrEmail("");
+    setErrPassword("");
+    setErrAgree("");
+
+    let valid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(String(email).toLowerCase())) {
+      setErrEmail("Valid email address is required.");
+      valid = false;
+    }
+    if (!password || String(password).length < 8) {
+      setErrPassword("Password must be at least 8 characters.");
+      valid = false;
+    }
+    if (!agreeTandC) {
+      setErrAgree("You must agree to the Terms and Privacy Policy.");
+      valid = false;
+    }
+
+    if (valid) {
+      // All validations passed. Ready for backend submission.
+      // For now, just keep user on the same page (no backend logic added).
+      console.log("All validations passed. Ready to submit to backend.");
+    }
   };
 
   return (
@@ -50,6 +146,76 @@ const Register = () => {
             Join 500+ schools already using CampusOS to streamline their <br />
             daily operations and improve academic outcomes.
           </p>
+
+          <div className="step-overview">
+            <div
+              className={
+                currForm == 1
+                  ? "step-overview-block-active"
+                  : "step-overview-block"
+              }
+            >
+              <div className={currForm == 1 ? "active-step" : "completed-step"}>
+                1
+              </div>
+              <div>
+                <h3>School Information</h3>
+                <p>Basic Details about your school</p>
+              </div>
+            </div>
+            <div
+              className={
+                currForm != 1
+                  ? "step-progress-line-completed"
+                  : "step-progress-line"
+              }
+            ></div>
+            <div
+              className={
+                currForm == 2
+                  ? "step-overview-block-active"
+                  : "step-overview-block"
+              }
+            >
+              <div
+                className={
+                  currForm == 2
+                    ? "active-step"
+                    : currForm == 3
+                      ? "completed-step"
+                      : "step-block"
+                }
+              >
+                2
+              </div>
+              <div>
+                <h3>Location Details</h3>
+                <p>Address , City , State and Pincode</p>
+              </div>
+            </div>
+            <div
+              className={
+                currForm == 3
+                  ? "step-progress-line-completed"
+                  : "step-progress-line"
+              }
+            ></div>
+            <div
+              className={
+                currForm == 3
+                  ? "step-overview-block-active"
+                  : "step-overview-block"
+              }
+            >
+              <div className={currForm == 3 ? "active-step" : "step-block"}>
+                3
+              </div>
+              <div>
+                <h3>Account Setup</h3>
+                <p>Login Credentials and Confirmation</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="right">
@@ -65,7 +231,9 @@ const Register = () => {
             <div className={currForm == 1 ? "active-step" : "completed-step"}>
               {currForm == 1 ? "1" : <span>&#10003;</span>}
             </div>
-            <div className="step-line"></div>
+            <div
+              className={currForm != 1 ? "step-line-active" : "step-line"}
+            ></div>
             <div
               className={
                 currForm == 2
@@ -77,7 +245,9 @@ const Register = () => {
             >
               {currForm == 3 ? <span>&#10003;</span> : "2"}
             </div>
-            <div className="step-line"></div>
+            <div
+              className={currForm == 3 ? "step-line-active" : "step-line"}
+            ></div>
             <div className={currForm == 3 ? "active-step" : "step-block"}>
               3
             </div>
@@ -112,13 +282,21 @@ const Register = () => {
                     </span>
                     <input
                       value={schoolName}
-                      onChange={(e) => setSchoolName(e.target.value)}
+                      onChange={(e) => {
+                        setSchoolName(e.target.value);
+                        setErrSchoolName("");
+                      }}
                       id="schoolName"
                       type="text"
                       placeholder="e.g. Sunrise Public School"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errSchoolName && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 2 }}>
+                     <i class="ri-error-warning-line"></i> {errSchoolName}
+                    </p>
+                  )}
                 </div>
                 <div className="login-field">
                   <label
@@ -139,13 +317,21 @@ const Register = () => {
                     </span>
                     <input
                       value={principal}
-                      onChange={(e) => setPrincipal(e.target.value)}
+                      onChange={(e) => {
+                        setPrincipal(e.target.value);
+                        setErrPrincipal("");
+                      }}
                       id="principal"
                       type="text"
                       placeholder="e.g. DR. Ramesh Kumar"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errPrincipal && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errPrincipal}
+                    </p>
+                  )}
                 </div>
                 <div className="login-field">
                   <label
@@ -166,13 +352,21 @@ const Register = () => {
                     </span>
                     <input
                       value={udiseCode}
-                      onChange={(e) => setUdiseCode(e.target.value)}
+                      onChange={(e) => {
+                        setUdiseCode(e.target.value);
+                        setErrUdise("");
+                      }}
                       id="udise"
                       type="Number"
                       placeholder="e.g. 12345678901"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errUdise && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errUdise}
+                    </p>
+                  )}
                 </div>
 
                 <div className="login-field">
@@ -194,16 +388,24 @@ const Register = () => {
                     </span>
                     <input
                       value={contact}
-                      onChange={(e) => setContact(e.target.value)}
+                      onChange={(e) => {
+                        setContact(e.target.value);
+                        setErrContact("");
+                      }}
                       id="contact"
                       type="Number"
                       placeholder="e.g. +91 1234567899"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errContact && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errContact}
+                    </p>
+                  )}
                 </div>
                 <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
-                  Continue to Address
+                  Continue to Address <i class="ri-arrow-right-long-line"></i>
                 </button>
               </div>
             </form>
@@ -238,13 +440,21 @@ const Register = () => {
                     </span>
                     <input
                       value={fullAddress}
-                      onChange={(e) => setFullAddress(e.target.value)}
+                      onChange={(e) => {
+                        setFullAddress(e.target.value);
+                        setErrAddress("");
+                      }}
                       id="Address"
                       type="text"
                       placeholder="Street , Area , Building..."
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                {errAddress && (
+                  <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                   <i class="ri-error-warning-line"></i> {errAddress}
+                  </p>
+                )}
                 </div>
                 <div className="flex gap-4">
                   <div className="login-field">
@@ -266,13 +476,21 @@ const Register = () => {
                       </span>
                       <input
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          setErrCity("");
+                        }}
                         id="City"
                         type="text"
                         placeholder="e.g. Sunrise Public School"
                         className="input-field w-full py-2 px-3"
                       />
                     </div>
+                    {errCity && (
+                      <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                        <i class="ri-error-warning-line"></i> {errCity}
+                      </p>
+                    )}
                   </div>
                   <div className="login-field">
                     <label
@@ -293,12 +511,15 @@ const Register = () => {
                       </span>
                       <select
                         value={state}
-                        onChange={(e) => setState(e.target.value)}
+                        onChange={(e) => {
+                          setState(e.target.value);
+                          setErrState("");
+                        }}
                         id="State"
                         type="Select"
                         className="input-field w-full py-2 px-3"
                       >
-                        <option value="" selected disabled>
+                        <option value="" disabled>
                           Select State
                         </option>
 
@@ -350,6 +571,11 @@ const Register = () => {
                         <option value="Lakshadweep">Lakshadweep</option>
                         <option value="Puducherry">Puducherry</option>
                       </select>
+                      {errState && (
+                        <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                         <i class="ri-error-warning-line"></i> {errState}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -372,13 +598,21 @@ const Register = () => {
                     </span>
                     <input
                       value={pincode}
-                      onChange={(e) => setPincode(e.target.value)}
+                      onChange={(e) => {
+                        setPincode(e.target.value);
+                        setErrPincode("");
+                      }}
                       id="PinCode"
                       type="text"
                       placeholder="e.g. 284301"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errPincode && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errPincode}
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -388,7 +622,7 @@ const Register = () => {
                     <i class="ri-arrow-left-long-line"></i>Back
                   </button>
                   <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
-                    Continue to Account
+                    Continue to Account <i class="ri-arrow-right-long-line"></i>
                   </button>
                 </div>
               </div>
@@ -396,7 +630,7 @@ const Register = () => {
           )}
 
           {currForm == "3" && (
-            <form className="login-form">
+            <form className="login-form" onSubmit={submitHandlerForThirdForm}>
               <div className="form-1">
                 <div>
                   <h4 className="text-xs uppercase text-[#06b6d4] font-semibold mb-0">
@@ -424,13 +658,21 @@ const Register = () => {
                     </span>
                     <input
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrEmail("");
+                      }}
                       id="email"
                       type="email"
                       placeholder="principal@school.edu.in"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errEmail && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errEmail}
+                    </p>
+                  )}
                 </div>
                 <div className="login-field">
                   <label
@@ -451,20 +693,36 @@ const Register = () => {
                     </span>
                     <input
                       value={password}
-                      onChange={(e) => {setPassword(e.target.value)}}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setErrPassword("");
+                      }}
                       id="password"
                       type="password"
                       placeholder="Min. 8 Characters"
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
+                  {errPassword && (
+                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
+                     <i class="ri-error-warning-line"></i> {errPassword}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label class="flex items-center mt-4 checkbox-input gap-2">
                     <span
-                      onClick={()=>{agreeTandC == false ? setAgreeTandC(true) : setAgreeTandC(false)}}
-                      className={agreeTandC == false ? "checkbox-custom" : "checkbox-custom-tick"}
+                      onClick={() => {
+                        const toggled = !agreeTandC;
+                        setAgreeTandC(toggled);
+                        if (toggled) setErrAgree("");
+                      }}
+                      className={
+                        agreeTandC == false
+                          ? "checkbox-custom"
+                          : "checkbox-custom-tick"
+                      }
                     >
                       {agreeTandC == true ? <span>&#10003;</span> : ""}
                     </span>
@@ -479,6 +737,11 @@ const Register = () => {
                       </a>
                     </span>
                   </label>
+                  {errAgree && (
+                    <p style={{ color: "#ff4d4f", fontSize: 12, marginTop: 6 }}>
+                      {errAgree}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex gap-2">
@@ -495,6 +758,13 @@ const Register = () => {
               </div>
             </form>
           )}
+<br />
+          <p className="text-center text-[#94a3b8]">Already Registered? <Link
+                 to={'/login'}
+                className=" text-cyan-400 font-semibold hover:text-cyan-300"
+              >
+                Sign In <i class="ri-arrow-right-long-line"></i>
+              </Link></p>
         </div>
       </div>
     </div>
