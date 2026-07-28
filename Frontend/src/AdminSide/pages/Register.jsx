@@ -1,20 +1,32 @@
 import React, { useState } from "react";
 import "../styles/register.css";
+import "remixicon/fonts/remixicon.css";
 const Register = () => {
   const [currForm, setCurrForm] = useState(1);
   const [schoolName, setSchoolName] = useState("");
   const [principal, setPrincipal] = useState("");
   const [udiseCode, setUdiseCode] = useState();
   const [contact, setContact] = useState();
+  const [fullAddress, setFullAddress] = useState();
+  const [city, setCity] = useState();
+  const [state, setState] = useState();
+  const [pincode, setPincode] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [agreeTandC, setAgreeTandC] = useState(false);
 
-  const nextForm = () => {
-    setCurrForm(currForm + 1);
+  const prevPage = () => {
+    setCurrForm(currForm - 1);
   };
 
-  
-
-  const submitHandler = (e) => {
+  const submitHandlerForFirstForm = (e) => {
     e.preventDefault();
+    setCurrForm(2);
+  };
+
+  const submitHandlerForSecForm = (e) => {
+    e.preventDefault();
+    setCurrForm(3);
   };
 
   return (
@@ -50,15 +62,28 @@ const Register = () => {
           </p>
 
           <div className="step">
-            <div className={currForm == 1 ? "active-step" : "completed-step" }>{currForm == 1 ? '1' : <span>&#10003;</span>}</div>
+            <div className={currForm == 1 ? "active-step" : "completed-step"}>
+              {currForm == 1 ? "1" : <span>&#10003;</span>}
+            </div>
             <div className="step-line"></div>
-            <div className="step-block">2</div>
+            <div
+              className={
+                currForm == 2
+                  ? "active-step"
+                  : currForm == 3
+                    ? "completed-step"
+                    : "step-block"
+              }
+            >
+              {currForm == 3 ? <span>&#10003;</span> : "2"}
+            </div>
             <div className="step-line"></div>
-            <div className="step-block">3</div>
+            <div className={currForm == 3 ? "active-step" : "step-block"}>
+              3
+            </div>
           </div>
-
-          <form className="login-form">
-            {currForm == "1" && (
+          {currForm == "1" && (
+            <form className="login-form" onSubmit={submitHandlerForFirstForm}>
               <div className="form-1">
                 <div>
                   {" "}
@@ -177,15 +202,299 @@ const Register = () => {
                     />
                   </div>
                 </div>
-                <button
-                  onClick={() => nextForm()}
-                  className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110"
-                >
+                <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
                   Continue to Address
                 </button>
               </div>
-            )}
-          </form>
+            </form>
+          )}
+
+          {currForm == "2" && (
+            <form className="login-form" onSubmit={submitHandlerForSecForm}>
+              <div className="form-1">
+                <div>
+                  <h4 className="text-xs uppercase text-[#06b6d4] font-semibold mb-0">
+                    Location Details
+                  </h4>
+                  <hr className="mt-1 h-0.1 text-[#06b6d4]" />
+                </div>
+
+                <div className="login-field">
+                  <label
+                    className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                    htmlFor="schoolName"
+                  >
+                    Address
+                  </label>
+                  <div className="relative">
+                    <span className="input-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 20.8995L16.9497 15.9497C19.6834 13.2161 19.6834 8.78392 16.9497 6.05025C14.2161 3.31658 9.78392 3.31658 7.05025 6.05025C4.31658 8.78392 4.31658 13.2161 7.05025 15.9497L12 20.8995ZM12 23.7279L5.63604 17.364C2.12132 13.8492 2.12132 8.15076 5.63604 4.63604C9.15076 1.12132 14.8492 1.12132 18.364 4.63604C21.8787 8.15076 21.8787 13.8492 18.364 17.364L12 23.7279ZM12 13C13.1046 13 14 12.1046 14 11C14 9.89543 13.1046 9 12 9C10.8954 9 10 9.89543 10 11C10 12.1046 10.8954 13 12 13ZM12 15C9.79086 15 8 13.2091 8 11C8 8.79086 9.79086 7 12 7C14.2091 7 16 8.79086 16 11C16 13.2091 14.2091 15 12 15Z"></path>
+                      </svg>
+                    </span>
+                    <input
+                      value={fullAddress}
+                      onChange={(e) => setFullAddress(e.target.value)}
+                      id="Address"
+                      type="text"
+                      placeholder="Street , Area , Building..."
+                      className="input-field w-full py-2 px-3"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="login-field">
+                    <label
+                      className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                      htmlFor="schoolName"
+                    >
+                      City
+                    </label>
+                    <div className="relative">
+                      <span className="input-icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M21 19H23V21H1V19H3V4C3 3.44772 3.44772 3 4 3H14C14.5523 3 15 3.44772 15 4V19H19V11H17V9H20C20.5523 9 21 9.44772 21 10V19ZM5 5V19H13V5H5ZM7 11H11V13H7V11ZM7 7H11V9H7V7Z"></path>
+                        </svg>
+                      </span>
+                      <input
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        id="City"
+                        type="text"
+                        placeholder="e.g. Sunrise Public School"
+                        className="input-field w-full py-2 px-3"
+                      />
+                    </div>
+                  </div>
+                  <div className="login-field">
+                    <label
+                      className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                      htmlFor="schoolName"
+                    >
+                      State
+                    </label>
+                    <div className="relative">
+                      <span className="input-icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M21.7267 2.95694L16.2734 22.0432C16.1225 22.5716 15.7979 22.5956 15.5563 22.1126L11 13L1.9229 9.36919C1.41322 9.16532 1.41953 8.86022 1.95695 8.68108L21.0432 2.31901C21.5716 2.14285 21.8747 2.43866 21.7267 2.95694ZM19.0353 5.09647L6.81221 9.17085L12.4488 11.4255L15.4895 17.5068L19.0353 5.09647Z"></path>
+                        </svg>
+                      </span>
+                      <select
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                        id="State"
+                        type="Select"
+                        className="input-field w-full py-2 px-3"
+                      >
+                        <option value="" selected disabled>
+                          Select State
+                        </option>
+
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">
+                          Arunachal Pradesh
+                        </option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">
+                          Himachal Pradesh
+                        </option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+
+                        <option value="Andaman and Nicobar Islands">
+                          Andaman and Nicobar Islands
+                        </option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Dadra and Nagar Haveli and Daman and Diu">
+                          Dadra and Nagar Haveli and Daman and Diu
+                        </option>
+                        <option value="Delhi">Delhi (NCT)</option>
+                        <option value="Jammu and Kashmir">
+                          Jammu and Kashmir
+                        </option>
+                        <option value="Ladakh">Ladakh</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Puducherry">Puducherry</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="login-field">
+                  <label
+                    className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                    htmlFor="schoolName"
+                  >
+                    Pin Code
+                  </label>
+                  <div className="relative">
+                    <span className="input-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M11 17.9381C7.05369 17.446 4 14.0796 4 10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10C20 14.0796 16.9463 17.446 13 17.9381V20.0116C16.9463 20.1039 20 20.7351 20 21.5C20 22.3284 16.4183 23 12 23C7.58172 23 4 22.3284 4 21.5C4 20.7351 7.05369 20.1039 11 20.0116V17.9381ZM12 16C15.3137 16 18 13.3137 18 10C18 6.68629 15.3137 4 12 4C8.68629 4 6 6.68629 6 10C6 13.3137 8.68629 16 12 16ZM12 12C10.8954 12 10 11.1046 10 10C10 8.89543 10.8954 8 12 8C13.1046 8 14 8.89543 14 10C14 11.1046 13.1046 12 12 12Z"></path>
+                      </svg>
+                    </span>
+                    <input
+                      value={pincode}
+                      onChange={(e) => setPincode(e.target.value)}
+                      id="PinCode"
+                      type="text"
+                      placeholder="e.g. 284301"
+                      className="input-field w-full py-2 px-3"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={prevPage}
+                    className="border-[#94a3b82a] text-[#94a3b8] border rounded-[10px] hover:bg-[#94a3b81a]"
+                  >
+                    <i class="ri-arrow-left-long-line"></i>Back
+                  </button>
+                  <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
+                    Continue to Account
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+
+          {currForm == "3" && (
+            <form className="login-form">
+              <div className="form-1">
+                <div>
+                  <h4 className="text-xs uppercase text-[#06b6d4] font-semibold mb-0">
+                    Account Credentials
+                  </h4>
+                  <hr className="mt-1 h-0.1 text-[#06b6d4]" />
+                </div>
+
+                <div className="login-field">
+                  <label
+                    className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                    htmlFor="schoolName"
+                  >
+                    School Email Address
+                  </label>
+                  <div className="relative">
+                    <span className="input-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 7.23792L12.0718 14.338L4 7.21594V19H20V7.23792ZM4.51146 5L12.0619 11.662L19.501 5H4.51146Z"></path>
+                      </svg>
+                    </span>
+                    <input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      id="email"
+                      type="email"
+                      placeholder="principal@school.edu.in"
+                      className="input-field w-full py-2 px-3"
+                    />
+                  </div>
+                </div>
+                <div className="login-field">
+                  <label
+                    className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
+                    htmlFor="schoolName"
+                  >
+                    Create Password
+                  </label>
+                  <div className="relative">
+                    <span className="input-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M6 8V7C6 3.68629 8.68629 1 12 1C15.3137 1 18 3.68629 18 7V8H20C20.5523 8 21 8.44772 21 9V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V9C3 8.44772 3.44772 8 4 8H6ZM19 10H5V20H19V10ZM11 15.7324C10.4022 15.3866 10 14.7403 10 14C10 12.8954 10.8954 12 12 12C13.1046 12 14 12.8954 14 14C14 14.7403 13.5978 15.3866 13 15.7324V18H11V15.7324ZM8 8H16V7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V8Z"></path>
+                      </svg>
+                    </span>
+                    <input
+                      value={password}
+                      onChange={(e) => {setPassword(e.target.value)}}
+                      id="password"
+                      type="password"
+                      placeholder="Min. 8 Characters"
+                      className="input-field w-full py-2 px-3"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="flex items-center mt-4 checkbox-input gap-2">
+                    <span
+                      onClick={()=>{agreeTandC == false ? setAgreeTandC(true) : setAgreeTandC(false)}}
+                      className={agreeTandC == false ? "checkbox-custom" : "checkbox-custom-tick"}
+                    >
+                      {agreeTandC == true ? <span>&#10003;</span> : ""}
+                    </span>
+                    <span>
+                      I agree to the
+                      <a href="#" className="auth-link">
+                        Terms of Service
+                      </a>{" "}
+                      and{" "}
+                      <a href="#" className="auth-link">
+                        Privacy Policy
+                      </a>
+                    </span>
+                  </label>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={prevPage}
+                    className="border-[#94a3b82a] text-[#94a3b8] border rounded-[10px] hover:bg-[#94a3b81a]"
+                  >
+                    <i class="ri-arrow-left-long-line"></i>Back
+                  </button>
+                  <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
+                    Create Account <span>&#10003;</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

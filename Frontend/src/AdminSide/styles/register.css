@@ -51,11 +51,11 @@
     justify-content: center;
     overflow: scroll;
     scrollbar-width: none;
-
+    padding-block: 120px;
 
 
     .register-form {
-        padding: 60px 40px;
+        padding: 40px;
         border-radius: 8px;
         display: flex;
         flex-direction: column;
@@ -68,19 +68,31 @@
         width: 100%;
 
         p {
-            letter-spacing: .5px;
+
             margin-top: 3px;
             font-size: small;
         }
     }
 
-    .login-field,
-    button {
-        margin-top: 30px;
+    .login-field {
+        margin-top: 20px;
+    }
+
+    label {
+        font-size: .7rem;
     }
 
     button {
         padding: 12px 24px;
+        margin-top: 30px;
+    }
+
+
+    select {
+
+        option {
+            background-color: #050914;
+        }
     }
 
 
@@ -140,5 +152,38 @@
         justify-content: center;
         width: 36px;
         height: 36px;
+    }
+}
+
+.checkbox-custom {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 5px;
+   
+    background: rgba(255, 255, 255, 0.05);
+    transition: 0.2s;
+}
+
+.checkbox-custom-tick {
+     width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 5px;
+   
+    /* background: bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400; */
+    background: linear-gradient(135deg , rgba(128, 0, 128, 0.721)  , rgba(0, 255, 255, 0.523));
+    transition: 0.2s;
+}
+
+.checkbox-input {
+    input {
+        display: none;
     }
 }
