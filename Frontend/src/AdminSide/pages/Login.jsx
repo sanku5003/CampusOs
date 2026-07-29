@@ -1,7 +1,23 @@
-import React from "react";
-import {Link} from 'react-router'
-
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 const Login = () => {
+  const { loading, handleLogin } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const result = await handleLogin({ email, passcode: password });
+    console.log(result);
+
+    if (result.success) {
+      navigate("/");
+      return;
+    }
+  };
+
   return (
     <div className="h-screen flex flex-row bg-[#060b18] ">
       <div className="p-4 border-[#393939] border-r border-solid  w-[50%] bg-[radial-gradient(circle_at_top_left,rgba(88,28,135,0.5)_0%,rgba(30,27,75,0.35)_55%,#0B1020_70%,#070B16_100%)] flex items-center justify-center ">
@@ -46,7 +62,7 @@ const Login = () => {
             </p>
           </div>
 
-          <form className="login-form">
+          <form className="login-form" onSubmit={(e) => submitHandler(e)}>
             <div className="login-field">
               <label
                 className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
@@ -80,6 +96,8 @@ const Login = () => {
                   </svg>
                 </span>
                 <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   id="email"
                   type="email"
                   placeholder="principal@school.edu.in"
@@ -121,6 +139,8 @@ const Login = () => {
                   </svg>
                 </span>
                 <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   id="password"
                   type="password"
                   placeholder="Enter your password"
@@ -168,13 +188,18 @@ const Login = () => {
                 Forgot Password?
               </button>
             </div>
-
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110"
-            >
-              Sign In to Dashboard
-            </button>
+            {loading == true ? (
+              <div className="h-10 flex justify-center items-center mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110 overflow-hidden">
+                <img className="loading-image" src="/output-onlinegiftools.gif" />
+              </div>
+            ) : (
+              <button
+                type="submit"
+                className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110"
+              >
+                Sign In To dashboard
+              </button>
+            )}
           </form>
           <div className="login-form-footer mt-6 text-center flex flex-col justify-center gap-1">
             <p className="text-[0.7rem] font-semibold text-[#94a3b856] mb-3 flex items-center justify-center gap-4">
@@ -185,7 +210,7 @@ const Login = () => {
             <p className="text-[0.7rem] font-semibold text-[#94a3b8] mb-3">
               Register your school to get started{" "}
               <Link
-                 to={'/register'}
+                to={"/register"}
                 className=" text-cyan-400 font-semibold hover:text-cyan-300"
               >
                 Create Account →
@@ -193,9 +218,7 @@ const Login = () => {
             </p>
             <p className="text-[10px] text-[#64748b6c] leading-5 max-w-88 mx-auto font-semibold">
               By signing in you agree to our{" "}
-              <a  className=" text-[#94a3b899] underline">
-                Terms of Service
-              </a>
+              <a className=" text-[#94a3b899] underline">Terms of Service</a>
               and
               <a href="#" className="text-[#94a3b892] underline">
                 Privacy Policy
