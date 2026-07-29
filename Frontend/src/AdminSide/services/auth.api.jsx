@@ -7,27 +7,21 @@ const api = axios.create({
 });
 
 export async function register(schoolData) {
-    try{
-        const response = await api.post('/school/register' , schoolData);
+    try {
+        const response = await api.post('/school/register', schoolData);
         return response.data;
     } catch (err) {
-        console.log(err);
-        
+        console.error(err);
+        throw err;
     }
 }
 
 export async function login({ email, passcode }) {
   try {
-    
-    
-
     const response = await api.post("/school/login", {
       email,
       passcode,
-    });
-
-   
-    
+    });    
     return response.data;
   } catch (error) {
     console.error(error);

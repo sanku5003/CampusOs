@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import "../styles/register.css";
 import "remixicon/fonts/remixicon.css";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth"
 const Register = () => {
+  const navigate = useNavigate();
+  const {user , loading , handleRegister} = useAuth();
   const [currForm, setCurrForm] = useState(1);
   const [schoolName, setSchoolName] = useState("");
   const [principal, setPrincipal] = useState("");
@@ -15,6 +18,7 @@ const Register = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [agreeTandC, setAgreeTandC] = useState(false);
+
   // Validation error messages
   const [errSchoolName, setErrSchoolName] = useState("");
   const [errPrincipal, setErrPrincipal] = useState("");
@@ -27,6 +31,7 @@ const Register = () => {
   const [errEmail, setErrEmail] = useState("");
   const [errPassword, setErrPassword] = useState("");
   const [errAgree, setErrAgree] = useState("");
+  const [serverError, setServerError] = useState("");
 
   const prevPage = () => {
     setCurrForm(currForm - 1);
@@ -34,6 +39,7 @@ const Register = () => {
 
   const submitHandlerForFirstForm = (e) => {
     e.preventDefault();
+    setServerError("");
     // reset errors
     setErrSchoolName("");
     setErrPrincipal("");
@@ -55,11 +61,11 @@ const Register = () => {
       valid = false;
     }
     const contactDigits = String(contact || "").replace(/\D/g, "");
-    if (!contactDigits  ) {
+    if (!contactDigits) {
       setErrContact("Valid contact number is required.");
       valid = false;
-    } else if (contactDigits.length < 10){
-       setErrContact("Plz enter a valid contact number");
+    } else if (contactDigits.length < 10) {
+      setErrContact("Plz enter a valid contact number");
       valid = false;
     }
 
@@ -68,6 +74,7 @@ const Register = () => {
 
   const submitHandlerForSecForm = (e) => {
     e.preventDefault();
+    setServerError("");
     // reset errors
     setErrAddress("");
     setErrCity("");
@@ -78,7 +85,7 @@ const Register = () => {
     if (!fullAddress || fullAddress.trim() === "") {
       setErrAddress("Address is required.");
       valid = false;
-    } 
+    }
     if (!city || city.trim() === "") {
       setErrCity("City is required.");
       valid = false;
@@ -96,9 +103,9 @@ const Register = () => {
     if (valid) setCurrForm(3);
   };
 
-  const submitHandlerForThirdForm = (e) => {
+  const submitHandlerForThirdForm = async (e) => {
     e.preventDefault();
-    // reset errors
+    setServerError("");
     setErrEmail("");
     setErrPassword("");
     setErrAgree("");
@@ -119,9 +126,40 @@ const Register = () => {
     }
 
     if (valid) {
-      // All validations passed. Ready for backend submission.
-      // For now, just keep user on the same page (no backend logic added).
-      console.log("All validations passed. Ready to submit to backend.");
+      const schoolData = {
+        schoolName,
+        fullAddress,
+        city,
+        State_living: state,
+        pincode,
+        udiseCode,
+        principal,
+        email,
+        contact,
+        passcode: password,
+      };
+
+      const result = await handleRegister(schoolData);
+
+      if (result.success) {
+        navigate("/");
+        return;
+      }
+
+      const message = result.message || "Registration failed";
+      setServerError(message);
+
+      if (/email/i.test(message)) {
+        setErrEmail(message);
+      } else if (/contact/i.test(message)) {
+        setErrContact(message);
+      } else if (/school|udise/i.test(message)) {
+        setErrUdise(message);
+      } else if (/password/i.test(message)) {
+        setErrPassword(message);
+      } else if (/agree|terms|privacy/i.test(message)) {
+        setErrAgree(message);
+      }
     }
   };
 
@@ -227,6 +265,13 @@ const Register = () => {
             Complete all 3 steps to create your account
           </p>
 
+          {serverError && (
+            <div className="auth-alert mt-3">
+              <i className="ri-error-warning-line"></i>
+              <span>{serverError}</span>
+            </div>
+          )}
+
           <div className="step">
             <div className={currForm == 1 ? "active-step" : "completed-step"}>
               {currForm == 1 ? "1" : <span>&#10003;</span>}
@@ -293,8 +338,8 @@ const Register = () => {
                     />
                   </div>
                   {errSchoolName && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 2 }}>
-                     <i class="ri-error-warning-line"></i> {errSchoolName}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errSchoolName}
                     </p>
                   )}
                 </div>
@@ -328,8 +373,8 @@ const Register = () => {
                     />
                   </div>
                   {errPrincipal && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errPrincipal}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errPrincipal}
                     </p>
                   )}
                 </div>
@@ -363,8 +408,8 @@ const Register = () => {
                     />
                   </div>
                   {errUdise && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errUdise}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errUdise}
                     </p>
                   )}
                 </div>
@@ -399,13 +444,13 @@ const Register = () => {
                     />
                   </div>
                   {errContact && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errContact}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errContact}
                     </p>
                   )}
                 </div>
                 <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
-                  Continue to Address <i class="ri-arrow-right-long-line"></i>
+                  Continue to Address <i className="ri-arrow-right-long-line"></i>
                 </button>
               </div>
             </form>
@@ -450,11 +495,11 @@ const Register = () => {
                       className="input-field w-full py-2 px-3"
                     />
                   </div>
-                {errAddress && (
-                  <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                   <i class="ri-error-warning-line"></i> {errAddress}
-                  </p>
-                )}
+                  {errAddress && (
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errAddress}
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-4">
                   <div className="login-field">
@@ -487,8 +532,8 @@ const Register = () => {
                       />
                     </div>
                     {errCity && (
-                      <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                        <i class="ri-error-warning-line"></i> {errCity}
+                      <p className="auth-field-error">
+                        <i className="ri-error-warning-line"></i> {errCity}
                       </p>
                     )}
                   </div>
@@ -572,8 +617,8 @@ const Register = () => {
                         <option value="Puducherry">Puducherry</option>
                       </select>
                       {errState && (
-                        <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                         <i class="ri-error-warning-line"></i> {errState}
+                        <p className="auth-field-error">
+                          <i className="ri-error-warning-line"></i> {errState}
                         </p>
                       )}
                     </div>
@@ -609,8 +654,8 @@ const Register = () => {
                     />
                   </div>
                   {errPincode && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errPincode}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errPincode}
                     </p>
                   )}
                 </div>
@@ -619,10 +664,10 @@ const Register = () => {
                     onClick={prevPage}
                     className="border-[#94a3b82a] text-[#94a3b8] border rounded-[10px] hover:bg-[#94a3b81a]"
                   >
-                    <i class="ri-arrow-left-long-line"></i>Back
+                    <i className="ri-arrow-left-long-line"></i>Back
                   </button>
                   <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
-                    Continue to Account <i class="ri-arrow-right-long-line"></i>
+                    Continue to Account <i className="ri-arrow-right-long-line"></i>
                   </button>
                 </div>
               </div>
@@ -669,8 +714,8 @@ const Register = () => {
                     />
                   </div>
                   {errEmail && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errEmail}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errEmail}
                     </p>
                   )}
                 </div>
@@ -704,14 +749,14 @@ const Register = () => {
                     />
                   </div>
                   {errPassword && (
-                    <p style={{ color: "#ff4d4f", fontSize: 10, marginTop: 3 }}>
-                     <i class="ri-error-warning-line"></i> {errPassword}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errPassword}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label class="flex items-center mt-4 checkbox-input gap-2">
+                  <label className="flex items-center mt-4 checkbox-input gap-2">
                     <span
                       onClick={() => {
                         const toggled = !agreeTandC;
@@ -738,8 +783,8 @@ const Register = () => {
                     </span>
                   </label>
                   {errAgree && (
-                    <p style={{ color: "#ff4d4f", fontSize: 12, marginTop: 6 }}>
-                      {errAgree}
+                    <p className="auth-field-error">
+                      <i className="ri-error-warning-line"></i> {errAgree}
                     </p>
                   )}
                 </div>
@@ -749,7 +794,8 @@ const Register = () => {
                     onClick={prevPage}
                     className="border-[#94a3b82a] text-[#94a3b8] border rounded-[10px] hover:bg-[#94a3b81a]"
                   >
-                    <i class="ri-arrow-left-long-line"></i>Back
+                    <i className
+                    ="ri-arrow-left-long-line"></i>Back
                   </button>
                   <button className="mt-2 w-full rounded-[10px] bg-linear-to-r from-purple-600 via-violet-500 to-cyan-400 py-1 text-[0.8rem] font-semibold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110">
                     Create Account <span>&#10003;</span>
@@ -758,13 +804,16 @@ const Register = () => {
               </div>
             </form>
           )}
-<br />
-          <p className="text-center text-[#94a3b8]">Already Registered? <Link
-                 to={'/login'}
-                className=" text-cyan-400 font-semibold hover:text-cyan-300"
-              >
-                Sign In <i class="ri-arrow-right-long-line"></i>
-              </Link></p>
+          <br />
+          <p className="text-center text-[#94a3b8]">
+            Already Registered?{" "}
+            <Link
+              to={"/login"}
+              className=" text-cyan-400 font-semibold hover:text-cyan-300"
+            >
+              Sign In <i className="ri-arrow-right-long-line"></i>
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -5,17 +5,20 @@ const Login = () => {
   const { loading, handleLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState("");
 
   const navigate = useNavigate();
   const submitHandler = async (e) => {
     e.preventDefault();
+    setFormError("");
     const result = await handleLogin({ email, passcode: password });
-    console.log(result);
 
     if (result.success) {
       navigate("/");
       return;
     }
+
+    setFormError(result.message || "Unable to sign in. Please try again.");
   };
 
   return (
@@ -63,6 +66,12 @@ const Login = () => {
           </div>
 
           <form className="login-form" onSubmit={(e) => submitHandler(e)}>
+            {formError && (
+              <div className="auth-alert">
+                <i className="ri-error-warning-line"></i>
+                <span>{formError}</span>
+              </div>
+            )}
             <div className="login-field">
               <label
                 className=" text-[#94a3b8] font-semibold text-[0.7rem]  block"
