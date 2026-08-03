@@ -1,5 +1,30 @@
 const pool = require("../db/db");
 
+const getSchoolId = async (req) => {
+  const school = await pool.query(`SELECT school_id FROM school WHERE school_id=$1`, [
+    req.user.id,
+  ]);
+
+  if (school.rows.length === 0) {
+    throw new Error("School not found");
+  }
+
+  return school.rows[0].school_id;
+};
+
+const getClassId = async (school_id, class_val, sec) => {
+  const class_data = await pool.query(
+    `SELECT class_id FROM class WHERE class=$1 AND section=$2 AND school_id=$3`,
+    [class_val, sec, school_id],
+  );
+
+  if (class_data.rows.length === 0) {
+    throw new Error("Class not found");
+  }
+
+  return class_data.rows[0].class_id;
+};
+
 const AddStudentController = async (req, res) => {
   const {
     student_name,
@@ -14,6 +39,7 @@ const AddStudentController = async (req, res) => {
     email,
     contact,
     admission_date,
+    addmission_date,
     roll_no,
     dob,
   } = req.body;
@@ -30,7 +56,7 @@ const AddStudentController = async (req, res) => {
     !pincode ||
     !email ||
     !contact ||
-    !admission_date ||
+    !(admission_date || addmission_date) ||
     !roll_no ||
     !dob
   ) {
@@ -39,86 +65,258 @@ const AddStudentController = async (req, res) => {
     });
   }
 
-  const school = await pool.query(`SELECT * FROM school WHERE school_id=$1`, [
-    req.user.id,
-  ]);
+  try {
+    const school_id = await getSchoolId(req);
+    const class_id = await getClassId(school_id, class_val, sec);
 
-  const school_id = school.rows[0].school_id;
+    const isEmailExist = await pool.query(
+      `SELECT * FROM student WHERE email=$1 AND school_id=$2`,
+      [email, school_id],
+    );
+    if (isEmailExist.rows.length > 0) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
 
-  const class_data = await pool.query(
-    `SELECT * FROM class WHERE class=$1 AND section=$2 AND school_id=$3`,
-    [class_val, sec, school_id],
-  );
+    const isRegNoExist = await pool.query(
+      `SELECT * FROM student WHERE reg_no=$1 AND school_id=$2`,
+      [reg_no, school_id],
+    );
+    if (isRegNoExist.rows.length > 0) {
+      return res.status(400).json({ message: "Registration No already exist" });
+    }
 
-  const isEmailExist = await pool.query(
-    `SELECT * FROM student WHERE email=$1 AND school_id=$2`,
-    [email, school_id],
-  );
-  if (isEmailExist.rows.length > 0) {
-    return res.status(400).json({ message: "Email already registered" });
+    const isRollNoExist = await pool.query(
+      `SELECT * FROM student WHERE roll_no=$1 AND school_id=$2`,
+      [roll_no, school_id],
+    );
+    if (isRollNoExist.rows.length > 0) {
+      return res.status(400).json({ message: "Roll No already exist" });
+    }
+
+    const insertQuery = `
+      INSERT INTO student (
+        student_name,
+        class_id,
+        gender,
+        reg_no,
+        fullAddress,
+        city,
+        state_living,
+        pincode,
+        email,
+        contact,
+        admission_date,
+        roll_no,
+        school_id,
+        dob
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      RETURNING student_id, student_name, class_id, email, contact
+    `;
+
+    const result = await pool.query(insertQuery, [
+      student_name,
+      class_id,
+      gender,
+      reg_no,
+      fullAddress,
+      city,
+      state_living,
+      pincode,
+      email,
+      contact,
+      admission_date || addmission_date,
+      roll_no,
+      school_id,
+      dob,
+    ]);
+
+    const student = result.rows[0];
+
+    return res.status(201).json({
+      message: "student registered successfully",
+      student,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
-
-  const isRegNoExist = await pool.query(
-    `SELECT * FROM student WHERE reg_no=$1 AND school_id=$2`,
-    [reg_no, school_id],
-  );
-  if (isRegNoExist.rows.length > 0) {
-    return res.status(400).json({ message: "Registration No already exist" });
-  }
-
-  const isRollNoExist = await pool.query(
-    `SELECT * FROM student WHERE reg_no=$1`,
-    [roll_no],
-  );
-  if (isRollNoExist.rows.length > 0) {
-    return res.status(400).json({ message: "Roll No already exist" });
-  }
-
-  const class_id = class_data.rows[0].class_id;
-
-
-  const insertQuery = `
-    INSERT INTO student (student_name,
-    class_id,
-    gender,
-    reg_no,
-    fullAddress,
-    city,
-    state_living,
-    pincode,
-    email,
-    contact,
-    admission_date,
-    roll_no,
-    school_id,
-    dob)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11 ,$12 ,$13 , $14)
-    RETURNING school_id, student_name , class_id , email, contact
-  `;
-
-  const result = await pool.query(insertQuery, [
-    student_name,
-    class_id,
-    gender,
-    reg_no,
-    fullAddress,
-    city,
-    state_living,
-    pincode,
-    email,
-    contact,
-    admission_date,
-    roll_no,
-    school_id,
-    dob,
-  ]);
-
-  const student = result.rows[0];
-
-  return res.status(201).json({
-    message: "student registered successfully",
-    student,
-  });
 };
 
-module.exports = { AddStudentController };
+const ViewStudentsController = async (req, res) => {
+  try {
+    const school_id = await getSchoolId(req);
+    const result = await pool.query(
+      `SELECT * FROM student WHERE school_id=$1 ORDER BY student_name ASC`,
+      [school_id],
+    );
+
+    return res.status(200).json({
+      message: "Students fetched successfully",
+      students: result.rows,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const ViewStudentController = async (req, res) => {
+  try {
+    const school_id = await getSchoolId(req);
+    const { student_id } = req.params;
+
+    const result = await pool.query(
+      `SELECT * FROM student WHERE student_id=$1 AND school_id=$2`,
+      [student_id, school_id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.status(200).json({
+      message: "Student fetched successfully",
+      student: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const UpdateStudentController = async (req, res) => {
+  try {
+    const school_id = await getSchoolId(req);
+    const { student_id } = req.params;
+    const existingStudent = await pool.query(
+      `SELECT * FROM student WHERE student_id=$1 AND school_id=$2`,
+      [student_id, school_id],
+    );
+
+    if (existingStudent.rows.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const currentStudent = existingStudent.rows[0];
+    const updateData = { ...req.body };
+    const updateFields = [];
+    const values = [];
+    let index = 1;
+
+    const addField = (column, value) => {
+      if (value !== undefined) {
+        updateFields.push(`${column}=$${index}`);
+        values.push(value);
+        index += 1;
+      }
+    };
+
+    addField("student_name", updateData.student_name);
+    addField("gender", updateData.gender);
+    addField("reg_no", updateData.reg_no);
+    addField("fullAddress", updateData.fullAddress);
+    addField("city", updateData.city);
+    addField("state_living", updateData.state_living);
+    addField("pincode", updateData.pincode);
+    addField("email", updateData.email);
+    addField("contact", updateData.contact);
+    addField("roll_no", updateData.roll_no);
+    addField("dob", updateData.dob);
+
+    const admissionDate = updateData.admission_date ?? updateData.addmission_date;
+    if (admissionDate !== undefined) {
+      addField("addmission_date", admissionDate);
+    }
+
+    let class_id = currentStudent.class_id;
+    if (updateData.class_val || updateData.sec) {
+      const class_val = updateData.class_val ?? (await pool.query(
+        `SELECT class FROM class WHERE class_id=$1 AND school_id=$2`,
+        [currentStudent.class_id, school_id],
+      )).rows[0]?.class;
+      const sec = updateData.sec ?? (await pool.query(
+        `SELECT section FROM class WHERE class_id=$1 AND school_id=$2`,
+        [currentStudent.class_id, school_id],
+      )).rows[0]?.section;
+
+      class_id = await getClassId(school_id, class_val, sec);
+      addField("class_id", class_id);
+    }
+
+    if (updateFields.length === 0) {
+      return res.status(400).json({ message: "No valid fields provided" });
+    }
+
+    if (updateData.email) {
+      const emailCheck = await pool.query(
+        `SELECT student_id FROM student WHERE email=$1 AND school_id=$2 AND student_id <> $3`,
+        [updateData.email, school_id, student_id],
+      );
+      if (emailCheck.rows.length > 0) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+    }
+
+    if (updateData.reg_no) {
+      const regNoCheck = await pool.query(
+        `SELECT student_id FROM student WHERE reg_no=$1 AND school_id=$2 AND student_id <> $3`,
+        [updateData.reg_no, school_id, student_id],
+      );
+      if (regNoCheck.rows.length > 0) {
+        return res.status(400).json({ message: "Registration No already exist" });
+      }
+    }
+
+    if (updateData.roll_no) {
+      const rollNoCheck = await pool.query(
+        `SELECT student_id FROM student WHERE roll_no=$1 AND school_id=$2 AND student_id <> $3`,
+        [updateData.roll_no, school_id, student_id],
+      );
+      if (rollNoCheck.rows.length > 0) {
+        return res.status(400).json({ message: "Roll No already exist" });
+      }
+    }
+
+    values.push(student_id, school_id);
+    const result = await pool.query(
+      `UPDATE student SET ${updateFields.join(", ")} WHERE student_id=$${index} AND school_id=$${index + 1} RETURNING *`,
+      values,
+    );
+
+    return res.status(200).json({
+      message: "Student updated successfully",
+      student: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const DeleteStudentController = async (req, res) => {
+  try {
+    const school_id = await getSchoolId(req);
+    const { student_id } = req.params;
+
+    const result = await pool.query(
+      `DELETE FROM student WHERE student_id=$1 AND school_id=$2 RETURNING student_id, student_name`,
+      [student_id, school_id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.status(200).json({
+      message: "Student deleted successfully",
+      student: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  AddStudentController,
+  ViewStudentsController,
+  ViewStudentController,
+  UpdateStudentController,
+  DeleteStudentController,
+};
