@@ -15,8 +15,10 @@ app.use(
 
 
 
-const authRouter = require('../src/routes/auth.routes')
+const authRouter = require('../src/routes/auth.routes');
+const studentRouter = require('../src/routes/student.routes');
 
 app.use('/school' , authRouter);
+app.use('/school/student' , studentRouter)
 
 module.exports = app;
