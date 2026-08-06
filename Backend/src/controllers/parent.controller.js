@@ -110,4 +110,92 @@ const viewParentController = async (req, res) => {
 
 
 
-module.exports = { addParentController, viewParentController };
+const updateParentController = async (req, res) => {
+  try {
+    const schoolId = await getSchoolId(req);
+    const { student_id } = req.params;
+    const isStudentExist = await isStudentIdValid(schoolId, student_id);
+    if (isStudentExist === false) {
+      return res.status(404).json({
+        message: "student not found",
+      });
+    }
+
+    const updateData = { ...req.body };
+    const updateFields = [];
+    const values = [];
+    let index = 1;
+
+    const addField = (column, value) => {
+      if (value !== undefined) {
+        updateFields.push(`${column}=$${index}`);
+        values.push(value);
+        index += 1;
+      }
+    };
+
+    addField("parent_name", updateData.parent_name);
+    addField("relation", updateData.relation);
+    addField("email", updateData.email);
+    addField("contact", updateData.contact);
+    addField("education", updateData.education);
+    addField("profession", updateData.profession);
+
+    if (updateFields.length === 0) {
+      return res.status(400).json({
+        message: "No valid fields provided",
+      });
+    }
+
+    values.push(student_id);
+    const result = await pool.query(
+      `UPDATE parent SET ${updateFields.join(", ")} WHERE student_id=$${index} RETURNING *`,
+      values,
+    );
+
+    return res.status(200).json({
+      message: "parent updated successfully",
+      parent: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const deleteParentController = async (req, res) => {
+  try {
+    const schoolId = await getSchoolId(req);
+    const { student_id } = req.params;
+    const isStudentExist = await isStudentIdValid(schoolId, student_id);
+    if (isStudentExist === false) {
+      return res.status(404).json({
+        message: "student not found",
+      });
+    }
+
+    const result = await pool.query(
+      `DELETE FROM parent WHERE student_id=$1 RETURNING parent_id, parent_name`,
+      [student_id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "parent not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "parent deleted successfully",
+      parent: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  addParentController,
+  viewParentController,
+  updateParentController,
+  deleteParentController,
+};

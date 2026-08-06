@@ -32,10 +32,10 @@
 }
 
 .selection-menu {
-   box-sizing: border-box;
+    box-sizing: border-box;
     overflow-y: auto;
     height: 100%;
-    padding-bottom: 60px;
+    padding-bottom: 100px;
 
     scrollbar-width: thin;
     scrollbar-color: #22283e96 #0f1426;
@@ -58,6 +58,7 @@
 
 .menu-part {
     padding: 20px 20px;
+    padding-bottom: 0;
 }
 
 
@@ -76,12 +77,14 @@
     i {
         font-weight: 300;
     }
+
     &:hover {
         background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.05));
         color: white !important;
-         i {
-             color: white !important;
-         }
+
+        i {
+            color: white !important;
+        }
 
     }
 }
@@ -170,3 +173,54 @@
 
     }
 }
+
+.active-option {
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.242), rgba(6, 181, 212, 0.242));
+    color: #fcfcfdb9;
+    padding: 5px;
+    font-size: small;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    transition: 500ms all;
+    overflow: hidden;
+    gap: 3px;
+
+    i {
+        font-weight: 300;
+        color: #7c3aed !important;
+        background-color: #7c3aed29;
+        padding: 4px;
+        border-radius: 5px;
+    }
+
+    
+}
+
+.active-option::before {
+    content : '';
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    width: 4px;
+    height: 20px;
+    border-radius:20px ;
+    position: relative;
+   
+    transition: 500ms all;
+    margin: 0;
+    left: -7px;
+    animation: scale 300ms ease 0s forwards;
+}
+
+@keyframes scale { 
+    0% {
+        transform: scale(0);
+    } 
+
+    100% {
+        transform: scale(1.5);
+    }
+    
+}
+
+

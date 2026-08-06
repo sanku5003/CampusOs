@@ -3,6 +3,7 @@ CREATE TABLE
         class_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         class VARCHAR(100) NOT NULL,
         section VARCHAR(10) NOT NULL,
+        room_no VARCHAR(10) ,
         school_id UUID NOT NULL,
         FOREIGN KEY (school_id) REFERENCES school (school_id)
     );
