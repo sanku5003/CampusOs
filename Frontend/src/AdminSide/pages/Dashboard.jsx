@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/dashboard.css";
 import "remixicon/fonts/remixicon.css";
-import Classes from "../components/Classes";
+import Classes from "../components/classcomponents/Classes";
 
 
 const Dashboard = () => {

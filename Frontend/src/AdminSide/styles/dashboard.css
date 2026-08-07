@@ -262,14 +262,87 @@
 .primary-btn {
     background: linear-gradient(135deg, #6d28d9, #0891b2);
     color: white;
-    padding: 8px 20px ;
+    padding: 8px 20px;
     border-radius: 10px;
     font-size: small;
     font-weight: bold;
     transition: 300ms all;
+
     &:hover {
         background: linear-gradient(135deg, #753dce, #12b1d9);
         box-shadow: 0px 0px 10px #06b5d496;
-        
+
     }
 }
+
+.class-list {
+    width: 100%;
+    margin-top: 60px;
+    border: 1px solid #25315c;
+    border-radius: 10px;
+     
+    table {
+         width: 100%;
+    }
+
+    .class-card-head,
+    .class-card {
+        color: white;
+        font-size: small;
+        height: 40px;
+        
+    }
+
+
+
+
+
+    .class-card-head {
+        background-color: #03050a50 !important;
+        color: #94a3b88b;
+        
+    }
+
+    .class-card {
+        background-color: #12182d;
+       
+    }
+
+
+    td,
+    th {
+        text-align: center;
+        
+        
+    }
+
+    
+
+    .sec-btn {
+        padding: 4px 8px ;
+        border: 1px solid #94a3b88b;
+        border-radius: 5px;
+        margin-right: 7px;
+        color:#94a3b88b ;
+
+        &:hover {
+            background-color: #0d132a;
+            color: white;
+        }
+    }
+}
+
+ .sec-btn {
+        padding: 8px 12px ;
+        border: 1px solid #94a3b88b;
+        border-radius: 5px;
+        margin-right: 7px;
+        color:#94a3b88b ;
+
+        &:hover {
+            background-color: #0d132a;
+            color: white;
+        }
+    }
+
+    
