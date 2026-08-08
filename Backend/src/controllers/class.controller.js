@@ -13,7 +13,7 @@ const getSchoolId = async (req) => {
 };
 
 const AddClassController = async (req, res) => {
-  const { class_val, section, room_no } = req.body;
+  const { class_val, section, room_no , medium } = req.body;
 
   if (!class_val || !section) {
     return res.status(400).json({ message: "Class and section are required" });
@@ -32,10 +32,10 @@ const AddClassController = async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO class (class, section, room_no, school_id)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO class (class, section, room_no,medium , school_id)
+       VALUES ($1, $2, $3, $4 , $5)
        RETURNING *`,
-      [class_val, section, room_no || null, school_id],
+      [class_val, section, room_no || null,medium , school_id],
     );
 
     return res.status(201).json({

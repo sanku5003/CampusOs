@@ -45,17 +45,19 @@ const ClassList = (props) => {
                 <th className="list-head">Class</th>
                 <th className="list-head">Section</th>
                 <th className="list-head"> Room No. </th>
+                <th className="list-head"> Medium </th>
                 <th className="list-head">Actions</th>
               </tr>
             </thead>
-            {classes.map((classData) => {
+            {classes.map((classData , idx) => {
               return (
-                <tbody className="class-card" key={classData.class_id}>
+                <tbody className="class-card" key={idx}>
                   <tr>
-                    <td className="list-value">{index}</td>
+                    <td className="list-value">{idx+1}</td>
                     <td className="list-value">class {classData.class}</td>
                     <td className="list-value"> {classData.section}</td>
                     <td className="list-value"> {classData.room_no}</td>
+                    <td className="list-value"> {classData.medium}</td>
                     <td className="list-value">
                       <button className="sec-btn">View</button>
                       <button className="sec-btn">Edit</button>

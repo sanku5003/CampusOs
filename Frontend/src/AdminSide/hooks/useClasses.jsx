@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { addClass, viewClasses } from "../services/class.api";
-
+import { addClassApi, viewClasses } from "../services/class.api";
 
 export const useClasses = () => {
   const [loading, setLoading] = useState(false);
   const [classes, setClasses] = useState([]);
-
-
 
   const getClasses = async () => {
     setLoading(true);
@@ -14,8 +11,7 @@ export const useClasses = () => {
     try {
       const response = await viewClasses();
       const classes = response.classes;
-      
-      
+
       setClasses(classes);
 
       return classes;
@@ -26,7 +22,27 @@ export const useClasses = () => {
     }
   };
 
+  const addClass = async ({className , section , room , medium}) => {
+    setLoading(true);
+    try {
+      const response = await addClassApi({className , section , room , medium});
+      if (!response || !response.class) {
+      throw new Error("Invalid response structure from server");
+    }
+      const classData = response.class;
+
+      return classData;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
-    getClasses , loading , classes
+    addClass,
+    getClasses,
+    loading,
+    classes,
   };
 };

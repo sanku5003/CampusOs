@@ -6,13 +6,11 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export async function addClass(classData) {
-  try {
-    const response = await api.post("/school/class/addClass");
+export async function addClassApi({className , section , room , medium}) {
+
+    const response = await api.post("/school/class/addClass" , {class_val : className , section ,room_no : room , medium});
     return response.data;
-  } catch (err) {
-    console.log(err);
-  }
+  
 }
 
 export async function viewClasses() {
