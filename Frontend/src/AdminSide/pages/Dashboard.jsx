@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/dashboard.css";
 import "remixicon/fonts/remixicon.css";
 import Classes from "../components/classcomponents/Classes";
+import Student from "../components/studentComponents/Student";
 
 
 const Dashboard = () => {
@@ -210,6 +211,7 @@ const Dashboard = () => {
 
         <div className="main-content">
           {selected == 'classes' && <Classes/>}
+          {selected == 'students' && <Student/>}
         </div>
       </div>
     </div>
