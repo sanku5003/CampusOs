@@ -1,9 +1,10 @@
 const pool = require("../db/db");
 
 const getSchoolId = async (req) => {
-  const school = await pool.query(`SELECT school_id FROM school WHERE school_id=$1`, [
-    req.user.id,
-  ]);
+  const school = await pool.query(
+    `SELECT school_id FROM school WHERE school_id=$1`,
+    [req.user.id],
+  );
 
   if (school.rows.length === 0) {
     throw new Error("School not found");
@@ -142,20 +143,141 @@ const AddStudentController = async (req, res) => {
   }
 };
 
+// const ViewStudentsController = async (req, res) => {
+//   try {
+//     const school_id = await getSchoolId(req);
+
+//     const { class_id: classIdQuery, class_val, sec, search } = req.query;
+
+//     let class_id = null;
+//     if (classIdQuery) {
+//       class_id = classIdQuery;
+//     } else if (class_val || sec) {
+//       const classRes = await pool.query(
+//         `SELECT class_id FROM class WHERE class=$1 AND section=$2 AND school_id=$3`,
+//         [class_val, sec, school_id],
+//       );
+
+//       if (classRes.rows.length === 0) {
+//         return res.status(200).json({
+//           message: "Students fetched successfully",
+//           students: [],
+//         });
+//       }
+
+//       class_id = classRes.rows[0].class_id;
+//     }
+
+//     const values = [school_id];
+//     const whereClauses = ["s.school_id=$1"];
+//     let idx = 2;
+
+//     if (class_id) {
+//       whereClauses.push(`s.class_id=$${idx}`);
+//       values.push(class_id);
+//       idx += 1;
+//     }
+
+//     if (search) {
+//       const pattern = `%${search}%`;
+//       whereClauses.push(
+//         `(s.student_name ILIKE $${idx} OR s.reg_no ILIKE $${idx} OR s.email ILIKE $${idx} OR s.contact ILIKE $${idx})`,
+//       );
+//       values.push(pattern);
+//       idx += 1;
+//     }
+
+//     const query = `
+//       SELECT s.*, c.class AS class_val, c.section
+//       FROM student s
+//       LEFT JOIN class c ON s.class_id = c.class_id
+//       WHERE ${whereClauses.join(" AND ")}
+//       ORDER BY s.student_name ASC
+//     `;
+
+//     const result = await pool.query(query, values);
+
+//     return res.status(200).json({
+//       message: "Students fetched successfully",
+//       students: result.rows,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ message: error.message });
+//   }
+// };
+
 const ViewStudentsController = async (req, res) => {
   try {
     const school_id = await getSchoolId(req);
-    const result = await pool.query(
-      `SELECT * FROM student WHERE school_id=$1 ORDER BY student_name ASC`,
-      [school_id],
-    );
+
+    const { class_val, sec, search } = req.query;
+
+    console.log("REQ.QUERY:", req.query);
+
+    const values = [school_id];
+
+    const whereClauses = ["s.school_id = $1"];
+
+    let idx = 2;
+
+    // CLASS FILTER
+    if (class_val && class_val.trim() !== "") {
+      whereClauses.push(`c.class = $${idx}`);
+      values.push(class_val);
+      idx++;
+    }
+
+    // SECTION FILTER
+    if (sec && sec.trim() !== "") {
+      whereClauses.push(`c.section = $${idx}`);
+      values.push(sec);
+      idx++;
+    }
+
+    // SEARCH FILTER
+    if (search && search.trim() !== "") {
+      const pattern = `%${search.trim()}%`;
+
+      whereClauses.push(`
+    (
+      s.student_name::text ILIKE $${idx}
+      OR s.reg_no::text ILIKE $${idx}
+      OR s.email::text ILIKE $${idx}
+      OR s.contact::text ILIKE $${idx}
+    )
+  `);
+
+      values.push(pattern);
+      idx++;
+    }
+
+    const query = `
+      SELECT
+        s.*,
+        c.class AS class_val,
+        c.section
+      FROM student s
+      LEFT JOIN class c
+        ON s.class_id = c.class_id
+      WHERE ${whereClauses.join(" AND ")}
+      ORDER BY s.student_name ASC
+    `;
+
+    console.log("QUERY:", query);
+    console.log("VALUES:", values);
+
+    const result = await pool.query(query, values);
 
     return res.status(200).json({
       message: "Students fetched successfully",
       students: result.rows,
     });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    console.error("VIEW STUDENTS ERROR:", error);
+
+    return res.status(400).json({
+      message: error.message,
+    });
   }
 };
 
@@ -221,21 +343,30 @@ const UpdateStudentController = async (req, res) => {
     addField("roll_no", updateData.roll_no);
     addField("dob", updateData.dob);
 
-    const admissionDate = updateData.admission_date ?? updateData.addmission_date;
+    const admissionDate =
+      updateData.admission_date ?? updateData.addmission_date;
     if (admissionDate !== undefined) {
       addField("addmission_date", admissionDate);
     }
 
     let class_id = currentStudent.class_id;
     if (updateData.class_val || updateData.sec) {
-      const class_val = updateData.class_val ?? (await pool.query(
-        `SELECT class FROM class WHERE class_id=$1 AND school_id=$2`,
-        [currentStudent.class_id, school_id],
-      )).rows[0]?.class;
-      const sec = updateData.sec ?? (await pool.query(
-        `SELECT section FROM class WHERE class_id=$1 AND school_id=$2`,
-        [currentStudent.class_id, school_id],
-      )).rows[0]?.section;
+      const class_val =
+        updateData.class_val ??
+        (
+          await pool.query(
+            `SELECT class FROM class WHERE class_id=$1 AND school_id=$2`,
+            [currentStudent.class_id, school_id],
+          )
+        ).rows[0]?.class;
+      const sec =
+        updateData.sec ??
+        (
+          await pool.query(
+            `SELECT section FROM class WHERE class_id=$1 AND school_id=$2`,
+            [currentStudent.class_id, school_id],
+          )
+        ).rows[0]?.section;
 
       class_id = await getClassId(school_id, class_val, sec);
       addField("class_id", class_id);
@@ -261,7 +392,9 @@ const UpdateStudentController = async (req, res) => {
         [updateData.reg_no, school_id, student_id],
       );
       if (regNoCheck.rows.length > 0) {
-        return res.status(400).json({ message: "Registration No already exist" });
+        return res
+          .status(400)
+          .json({ message: "Registration No already exist" });
       }
     }
 
