@@ -657,11 +657,11 @@ hr.fancy-line {
         transition: 300ms all;
     }
 
-    
+
 }
 
 .form-content {
-    padding: 20px;
+    padding: 40px !important;
 
     .tag {
         padding: 5px 12px;
@@ -669,7 +669,7 @@ hr.fancy-line {
         width: fit-content;
         border-radius: 20px;
         font-size: 10px;
-        color:#06b6d4 ;
+        color: #06b6d4;
         font-weight: 500;
         border: 1px solid #06b5d463;
     }
@@ -679,4 +679,64 @@ hr.fancy-line {
     color: #94a3b88b;
     font-size: 11px;
     font-weight: 500;
+}
+
+.student-form {
+    display: flex;
+    flex-wrap: wrap;
+
+
+    .student-form-input {
+        width: 50%;
+
+
+        .student-form-input-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+           
+
+            i {
+                position: absolute;
+                color: #142141a3;
+                top: 15px;
+                left: 5px;
+                font-size: small;
+            }
+
+            input,
+            select {
+                padding-inline: 25px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                background-color: #0f14265b;
+                border-radius: 3px;
+                border: 1px solid #032730;
+                padding-block: 5px;
+                color: white;
+                font-size: small;
+                box-sizing:content-box;
+                width: 75%;
+            }
+
+            input:focus  {
+                border: 1.5px solid #7c3aed91;
+                box-shadow: 0px 0px 5px #7c3aed86;
+                outline: none;
+            }
+
+            option {
+                background-color: #19203c;
+            }
+           
+
+
+        }
+    }
+
+
+    .primary-btn {
+        margin-top: 20px;
+        margin-left: auto;
+    }
 }

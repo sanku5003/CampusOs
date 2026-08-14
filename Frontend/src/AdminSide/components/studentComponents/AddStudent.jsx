@@ -108,32 +108,90 @@ const AddStudent = (props) => {
               <hr className="mt-2 text-[#4a494980]" />
 
               <form className="student-form">
-                    <div className="student-form-input">
-                        <label className="text-underheading" htmlFor="student_name">Full name</label>
-                        <div className="student-form-input-group">
-                            <i className="ri-user-line"></i>
-                            <input type="text" placeholder="e.g. Aarav Rathi" />
-                        </div>
-                    </div>
-                    <div className="student-form-input">
-                        <label className="text-underheading" htmlFor="student_name">Gender</label>
-                        <div className="student-form-input-group">
-                            <i className="ri-shining-line"></i>
-                            <select>
-                                <option disabled selected>Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="others">Others</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="student-form-input">
-                        <label className="text-underheading" htmlFor="student_name">Registration Number (Must be unique)</label>
-                        <div className="student-form-input-group">
-                            <i className="ri-computer-line"></i>
-                            <input type="text" placeholder="e.g. 20251084" />
-                        </div>
-                    </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="student_name">
+                    Full name
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-user-line"></i>
+                    <input type="text" placeholder="e.g. Aarav Rathi" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="gender">
+                    Gender
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-shining-line"></i>
+                    <select>
+                      <option disabled selected>
+                        Select Gender
+                      </option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="others">Others</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Registration Number (Must be unique)
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-computer-line"></i>
+                    <input type="Number" placeholder="e.g. 20251084" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Roll Number
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-tv-2-line"></i>
+                    <input type="Number" placeholder="e.g. 432" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Student Email
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-mail-line"></i>
+                    <input type="email" placeholder="e.g. student@gmail.com" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Student Contact
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-phone-line"></i>
+                    <input type="Number" placeholder="e.g. 9876543210" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Admission Date
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-calendar-line"></i>
+                    <input type="date" placeholder="e.g. 9876543210" />
+                  </div>
+                </div>
+                <div className="student-form-input">
+                  <label className="text-underheading" htmlFor="reg_no">
+                    Date Of Birth
+                  </label>
+                  <div className="student-form-input-group">
+                    <i className="ri-calendar-line"></i>
+                    <input type="date" />
+                  </div>
+                </div>
+
+              
+                <button className="primary-btn">
+                  Continue to Class & Address
+                </button>
               </form>
             </div>
           )}
