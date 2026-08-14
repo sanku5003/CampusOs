@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useMemo } from "react";
 import "../../styles/dashboard.css";
 import { useStudents } from "../../hooks/useStudents";
 import "remixicon/fonts/remixicon.css";
 import { useClasses } from "../../hooks/useClasses";
-const StudentList = () => {
+const StudentList = (props) => {
   const { searching, students, viewStudents } = useStudents();
   const { getClasses, loading, classes } = useClasses();
 
@@ -40,7 +40,7 @@ const StudentList = () => {
             records.
           </p>
         </div>
-        <button className="primary-btn">+ Add New Student</button>
+        <button className="primary-btn" onClick={()=>props.setCurrPage('AddStudentPage')}>+ Add New Student</button>
       </div>
 
       <div className="list">

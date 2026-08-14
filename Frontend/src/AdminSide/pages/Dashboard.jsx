@@ -178,7 +178,7 @@ const Dashboard = () => {
 
             <div className="current-page">
               <p className="text-xs text-[#94a3b88b] font-semibold">
-                CampusOS &gt; <span className="text-white">Dashboard</span>
+                CampusOS &gt; <span className="text-white capitalize">{selected}</span>
               </p>
             </div>
           </div>

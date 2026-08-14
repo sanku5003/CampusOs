@@ -212,7 +212,7 @@ const ViewStudentsController = async (req, res) => {
 
     const { class_val, sec, search } = req.query;
 
-    console.log("REQ.QUERY:", req.query);
+    
 
     const values = [school_id];
 
@@ -262,9 +262,6 @@ const ViewStudentsController = async (req, res) => {
       WHERE ${whereClauses.join(" AND ")}
       ORDER BY s.student_name ASC
     `;
-
-    console.log("QUERY:", query);
-    console.log("VALUES:", values);
 
     const result = await pool.query(query, values);
 
