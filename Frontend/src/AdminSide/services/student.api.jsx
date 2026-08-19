@@ -22,3 +22,23 @@ export async function viewStudentsApi(class_val, sec, search) {
     throw err;
   }
 }
+
+export async function addStudentApi(studentData) {
+  try {
+    const response = await api.post("/school/student/addStudent", studentData);
+    return response.data;
+  } catch (err) {
+    console.log("ADD STUDENT API ERROR:", err);
+    throw err;
+  }
+}
+
+export async function addParentApi(parentData) {
+  try {
+    const response = await api.post("/school/student/addParent", parentData);
+    return response.data;
+  } catch (err) {
+    console.log("ADD PARENT API ERROR:", err);
+    throw err;
+  }
+}

@@ -23,6 +23,7 @@ CREATE TABLE
         contact VARCHAR(15) UNIQUE NOT NULL,
         addmission_date DATE NOT NULL DEFAULT CURRENT_DATE,
         roll_no INT NOT NULL UNIQUE,
+        dob DATE NOT NULL,
         school_id UUID NOT NULL,
         FOREIGN KEY (class_id) REFERENCES class (class_id),
         FOREIGN KEY (school_id) REFERENCES school (school_id)
@@ -37,5 +38,5 @@ CREATE TABLE
         education VARCHAR(100) NOT NULL,
         profession VARCHAR(100) NOT NULL,
         student_id UUID NOT NULL ,
-        FOREIGN KEY (student_id) REFERENCES school (student_id)
+        FOREIGN KEY (student_id) REFERENCES student (student_id)
     );
