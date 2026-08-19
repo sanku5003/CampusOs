@@ -607,6 +607,7 @@ hr.fancy-line {
 
     .form-progress {
         width: 30%;
+        height: fit-content;
     }
 
     .form-content {
@@ -639,6 +640,10 @@ hr.fancy-line {
         background-color: #00000080;
         position: absolute;
         left: 14px;
+    }
+
+    .step-line-active {
+        background:linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important ;
     }
 
     .active {
@@ -681,6 +686,44 @@ hr.fancy-line {
     font-weight: 500;
 }
 
+.guardian-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #1c295c;
+}
+
+.guardian-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid #94a3b88b;
+    border-radius: 7px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    transition: 200ms all;
+
+    &:hover {
+        color: white;
+        border-color: #06b6d4;
+        background-color: #0d132a;
+    }
+
+    i {
+        font-size: 15px;
+    }
+}
+
+.guardian-tab-active {
+    border-color: transparent;
+    color: white;
+    background: linear-gradient(135deg, #6d28d9, #0891b2);
+}
+
 .student-form {
     display: flex;
     flex-wrap: wrap;
@@ -698,7 +741,7 @@ hr.fancy-line {
 
             i {
                 position: absolute;
-                color: #142141a3;
+                color: #21366a;
                 top: 15px;
                 left: 5px;
                 font-size: small;
@@ -717,6 +760,7 @@ hr.fancy-line {
                 font-size: small;
                 box-sizing:content-box;
                 width: 75%;
+                transition: 200ms all;
             }
 
             input:focus  {
@@ -725,9 +769,72 @@ hr.fancy-line {
                 outline: none;
             }
 
+            input:focus+i{
+                color :#7c3aed91;
+            }
+
             option {
                 background-color: #19203c;
             }
+
+            
+           
+
+
+        }
+
+        
+    }
+    
+
+    .student-form-textarea {
+         width: 100%;
+
+         .student-form-input-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+           
+
+            i {
+                position: absolute;
+                color: #21366a;
+                top: auto;
+                left: 5px;
+                font-size: small;
+            }
+
+            textarea {
+                padding-inline: 25px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                background-color: #0f14265b;
+                border-radius: 3px;
+                border: 1px solid #032730;
+                padding-block: 5px;
+                color: white;
+                font-size: small;
+                box-sizing:content-box;
+                width: 100%;
+                min-height: 20px;
+                 transition: 200ms all;
+            }
+
+            textarea:focus  {
+                border: 1.5px solid #7c3aed91;
+                box-shadow: 0px 0px 5px #7c3aed86;
+                outline: none;
+            }
+
+            textarea:focus+i{
+                color :#7c3aed91;
+            }
+
+            option {
+                background-color: #19203c;
+            }
+
+            
            
 
 
